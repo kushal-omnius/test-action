@@ -1,0 +1,14 @@
+name: test-simple-js-action
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Run simple JS action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+    ## Run K6 Test
+      - name: Simple Test
+        uses: kushal-omnius/openapi-validations@v1.0
+        
