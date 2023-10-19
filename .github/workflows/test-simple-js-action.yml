@@ -2,13 +2,16 @@ name: test-simple-js-action
 on:
   workflow_dispatch:
 jobs:
-  build:
-    name: Run simple JS action
+  simple_job:
     runs-on: ubuntu-latest
+    name: A job to say hello
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-    ## Run K6 Test
-      - name: Simple Test
+      - name: Hello world action step
+        id: hello
         uses: kushal-omnius/openapi-validations@v1.1.1
+        with:
+          who-to-greet: 'Mona the Octocat'
+      # Use the output from the `hello` step
+      - name: Get the output time
+        run: echo "The time was ${{ steps.hello.outputs.time }}"
         
