@@ -1,0 +1,43 @@
+name: test-simple-js-action
+on:
+    workflow_dispatch:
+      inputs:
+        user_name:
+          required: true
+          type: string
+          description: 'user name:'
+        benchmark_file:
+          required: true
+          type: string
+          description: 'BenchMark file name:'
+        source_file:
+          required: true
+          type: string
+          description: 'Source File Name:'
+        swagger_version:
+          required: true
+          type: string
+          description: 'openapi version:'
+jobs:
+  validation_job:
+    runs-on: ubuntu-latest
+    name: swagger-validator
+    env:
+        SERVER_URL: 'https://swagger-ui.internal.omnius.com'
+        REPO_NAME: 'https://swagger-ui.internal.omnius.com'
+    steps:
+      - name: run swagger validations
+        id: step1
+        uses: kushal-omnius/openapi-validations@v1.1.5
+        with:
+          who-to-greet:  ${{ github.event.inputs.user_name }}
+          benchmark_file:  ${{ env.SERVER_URL }}/files/${{ env.REPO_NAME }}/${{ github.event.inputs.benchmark_file }}
+          source_file:   ${{env.SERVER_URL}}/files/${{env.REPO_NAME}}/${{ github.event.inputs.source_file }}
+          openapi_version:  ${{ github.event.inputs.swagger_version }}
+      # Use the output from the `hello` step
+      - name: list the results
+        id: step2
+        run: |
+          echo "The Errors found in Swagger schema: ${{ steps.step1.outputs.swagger_validation_results }}"
+          echo "The Diffs found in Swagger schema comparison ${{ steps.step1.outputs.openapi_diff_results }}"
+        
