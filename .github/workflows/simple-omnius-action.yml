@@ -24,7 +24,7 @@ jobs:
     name: swagger-validator
     env:
         SERVER_URL: 'https://swagger-ui.internal.omnius.com'
-        REPO_NAME: 'https://swagger-ui.internal.omnius.com'
+        REPO_NAME: 'document-service'
     steps:
       - name: run swagger validations
         id: step1
