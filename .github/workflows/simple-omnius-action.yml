@@ -1,4 +1,4 @@
-name: test-simple-js-action
+name: simple-omnius-action
 on:
     workflow_dispatch:
       inputs:
