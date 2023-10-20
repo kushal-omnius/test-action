@@ -25,9 +25,8 @@ jobs:
     steps:
       - name: run swagger validations
         id: step1
-        uses: kushal-omnius/openapi-validations@v1.1.6
+        uses: kushal-omnius/openapi-validations@v1.1.7
         with:
-          who-to-greet:  ${{ github.event.inputs.user_name }}
           benchmark_file:  ${{ github.event.inputs.benchmark_file }}
           source_file:   ${{ github.event.inputs.source_file }}
           openapi_version:  ${{ github.event.inputs.swagger_version }}
@@ -35,6 +34,7 @@ jobs:
       - name: list the results
         id: step2
         run: |
+          echo "User_Name : ${{ github.event.inputs.user_name }}
           echo "The Errors found in Swagger schema: ${{ steps.step1.outputs.swagger_validation_results }}"
           echo "The Diffs found in Swagger schema comparison ${{ steps.step1.outputs.openapi_diff_results }}"
         
