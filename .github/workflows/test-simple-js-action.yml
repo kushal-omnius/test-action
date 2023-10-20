@@ -19,11 +19,11 @@ on:
           type: string
           description: 'openapi version:'
 jobs:
-  simple_job:
+  validation_job:
     runs-on: ubuntu-latest
-    name: validator
+    name: swagger-validator
     steps:
-      - name: run validations
+      - name: run swagger validations
         id: step1
         uses: kushal-omnius/openapi-validations@v1.1.2
         with:
@@ -32,9 +32,10 @@ jobs:
           source_file:  ${{ github.event.inputs.source_file }}
           openapi_version:  ${{ github.event.inputs.swagger_version }}
       # Use the output from the `hello` step
-      - name: Get the output time
+      - name: list the results
+        id: step2
         run: |
           echo "The time was ${{ steps.step1.outputs.time }}"
-          echo "The time was ${{ steps.step1.outputs.swagger_validation_results }}"
-          echo "The time was ${{ steps.step1.outputs.openapi_diff_results }}"
+          echo "The Errors found in Swagger schema: ${{ steps.step1.outputs.swagger_validation_results }}"
+          echo "The Diffs found in Swagger schema comparison ${{ steps.step1.outputs.openapi_diff_results }}"
         
