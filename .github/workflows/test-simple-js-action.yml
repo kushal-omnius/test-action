@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: run swagger validations
         id: step1
-        uses: kushal-omnius/openapi-validations@v1.2.4
+        uses: kushal-omnius/openapi-validations@v1.2.5
         with:
           benchmark_file:  ${{ github.event.inputs.benchmark_file }}
           source_file:   ${{ github.event.inputs.source_file }}
