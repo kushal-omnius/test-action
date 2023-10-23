@@ -2,10 +2,6 @@ name: test-simple-js-action
 on:
     workflow_dispatch:
       inputs:
-        user_name:
-          required: true
-          type: string
-          description: 'user name:'
         benchmark_file:
           required: true
           type: string
@@ -16,8 +12,18 @@ on:
           description: 'Source File Name:'
         swagger_version:
           required: true
-          type: string
-          description: 'openapi version:'
+          type: choice
+          options:
+            - '2'
+            - '3'
+          description: 'openapi/swagger version:'
+        on_failure_decision:
+          required: true
+          type: choice
+          options:
+            - none
+            - strict
+          description: 'action if failed [strict, none (default)]'
 jobs:
   validation_job:
     runs-on: ubuntu-latest
@@ -25,16 +31,16 @@ jobs:
     steps:
       - name: run swagger validations
         id: step1
-        uses: kushal-omnius/openapi-validations@v1.1.9
+        uses: kushal-omnius/openapi-validations@v1.2.0
         with:
           benchmark_file:  ${{ github.event.inputs.benchmark_file }}
           source_file:   ${{ github.event.inputs.source_file }}
           openapi_version:  ${{ github.event.inputs.swagger_version }}
+          blocking_decision:  ${{ github.event.inputs.on_failure_decision }}
       # Use the output from the `hello` step
       - name: list the results
         id: step2
         run: |
-          echo "User_Name : ${{ github.event.inputs.user_name }}
           echo "The Errors found in Swagger schema: ${{ steps.step1.outputs.swagger_validation_results }}"
           echo "The Diffs found in Swagger schema comparison ${{ steps.step1.outputs.openapi_diff_results }}"
         
