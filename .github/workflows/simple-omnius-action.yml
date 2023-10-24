@@ -2,21 +2,14 @@ name: simple-omnius-action
 on:
     workflow_dispatch:
       inputs:
-        benchmark_file:
-          required: true
-          type: string
-          description: 'BenchMark file name:'
         source_file:
           required: true
           type: string
           description: 'Source File Name:'
-        swagger_version:
+        benchmark_file:
           required: true
-          type: choice
-          options:
-            - '2'
-            - '3'
-          description: 'openapi/swagger version:'
+          type: string
+          description: 'BenchMark file name:'
         on_failure_decision:
           required: true
           type: choice
@@ -36,9 +29,8 @@ jobs:
         id: step1
         uses: far11ven/openapi-validations@v1.0.2
         with:
-          benchmark_file:  ${{ env.SERVER_URL }}/files/${{ env.REPO_NAME }}/${{ github.event.inputs.benchmark_file }}
           source_file:   ${{env.SERVER_URL}}/files/${{env.REPO_NAME}}/${{ github.event.inputs.source_file }}
-          openapi_version:  ${{ github.event.inputs.swagger_version }}
+          benchmark_file:  ${{ env.SERVER_URL }}/files/${{ env.REPO_NAME }}/${{ github.event.inputs.benchmark_file }}
           blocking_decision:  ${{ github.event.inputs.on_failure_decision }}
       # Use the output from the `hello` step
       - name: list the results
