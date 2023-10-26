@@ -39,7 +39,7 @@ jobs:
           source_file:   ${{env.SERVER_URL}}/files/${{env.REPO_NAME}}/${{ github.event.inputs.source_file }}
           benchmark_file:  ${{ env.SERVER_URL }}/files/${{ env.REPO_NAME }}/${{ github.event.inputs.benchmark_file }}
           blocking_decision:  ${{ github.event.inputs.on_failure_decision }}
-          validations: 'all'
+          validations: ${{ github.event.inputs.validations }}
           
       # Use the output from the `hello` step
       - name: list the results
