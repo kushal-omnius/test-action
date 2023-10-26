@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: run swagger validations
         id: step1
-        uses: far11ven/openapi-validations@v1.0.5
+        uses: far11ven/openapi-validations@v1.0.6
         with:
           source_file:   ${{ github.event.inputs.source_file }}
           benchmark_file:  ${{ github.event.inputs.benchmark_file }}
