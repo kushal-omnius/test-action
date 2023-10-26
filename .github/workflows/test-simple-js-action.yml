@@ -7,9 +7,16 @@ on:
           type: string
           description: 'Source File Name:'
         benchmark_file:
-          required: true
+          required: false
           type: string
           description: 'BenchMark file name:'
+        validations:
+          required: true
+          type: choice
+          options:
+            - all
+            - schema-validation-only
+          description: 'type of validations to run [all, schema-validation-only ]'
         on_failure_decision:
           required: true
           type: choice
@@ -29,6 +36,8 @@ jobs:
           source_file:   ${{ github.event.inputs.source_file }}
           benchmark_file:  ${{ github.event.inputs.benchmark_file }}
           blocking_decision:  ${{ github.event.inputs.on_failure_decision }}
+          validations: ${{ github.event.inputs.validations }}
+          
       # Use the output from the `hello` step
       - name: list the results
         id: step2
