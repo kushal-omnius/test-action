@@ -56,8 +56,9 @@ jobs:
 
         for i in $(seq 1 ${{ github.event.inputs.count }}); do
           echo "📤 Creating submission #$i..."
-
-          CURL_CMD="curl --silent --show-error --location \"$URL\" \
+          ENDPOINT_URL="$URL/rest/2.0/submissions"
+          echo "🔗 Endpoint URL: $ENDPOINT_URL"
+          CURL_CMD="curl --silent --show-error --location \"$ENDPOINT_URL\" \
             --header \"Authorization: Basic $AUTH_HEADER\""
 
           for FILE in $FILE_LIST; do
