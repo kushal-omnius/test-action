@@ -1,0 +1,79 @@
+name: Create Submissions
+description: This workflow creates multiple submissions using a curl command.
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: 'Number of submissions to create'
+        required: true
+        default: '1'
+      config_path:
+        type: string
+        required: true
+        description: '📄 Config YAML file name (located in /mnt/omnius-testing/dca-testing/config/)'
+        default: ''
+      files_path:
+        type: string
+        required: true
+        description: '📂 Folder location from /mnt/omnius-testing/omnius-load-testing/files/'
+
+jobs:
+  submit:
+    runs-on: testing
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Check and Install yq
+      run: |
+        if ! command -v yq &> /dev/null; then
+            echo "🔧 yq is not installed. Installing..."
+            sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+            sudo chmod +x /usr/bin/yq
+        else
+            echo "✅ yq is already installed."
+        fi
+
+    - name: Load config and create submissions
+      run: |
+        CONFIG_FILE="/mnt/omnius-testing/dca-testing/config/${{ github.event.inputs.config_path }}"
+        FILES_DIR="/mnt/omnius-testing/omnius-load-testing/files/${{ github.event.inputs.files_path }}"
+
+        echo "🔍 Loading config from $CONFIG_FILE"
+        echo "📂 Using files from $FILES_DIR"
+
+        # Parse YAML using yq
+        USERNAME=$(yq '.username' "$CONFIG_FILE")
+        PASSWORD=$(yq '.password' "$CONFIG_FILE")
+        URL=$(yq '.namespace_url' "$CONFIG_FILE")
+
+        # Generate Basic Auth header
+        AUTH_HEADER=$(echo -n "$USERNAME:$PASSWORD" | base64)
+
+        # Get list of files in the specified folder
+        FILE_LIST=$(ls "$FILES_DIR")
+
+        for i in $(seq 1 ${{ github.event.inputs.count }}); do
+          echo "📤 Creating submission #$i..."
+
+          CURL_CMD="curl --silent --show-error --location \"$URL\" \
+            --header \"Authorization: Basic $AUTH_HEADER\""
+
+          for FILE in $FILE_LIST; do
+            FULL_PATH=\"$FILES_DIR/$FILE\"
+            CURL_CMD+=" --form \"files=@$FULL_PATH\""
+          done
+
+          # Execute and capture response
+          RESPONSE=$(eval $CURL_CMD)
+          STATUS=$?
+
+          if [ $STATUS -ne 0 ]; then
+            echo "::error::Submission #$i failed with curl error code $STATUS"
+          else
+            echo "✅ Submission #$i succeeded."
+            echo "📝 Response: $RESPONSE"
+          fi
+        done
+      shell: bash
